@@ -28,6 +28,18 @@ public class ItemMaker {
         System.out.println("Броня " + armor.getId() + " добавлена.");
     }
 
+    public static void addWeapon(Weapon weapon) {
+        armor.setId(makeId(ItemType.ARMOR, armor.getId()));
+        armorsList.put(armor.getId(), armor);
+        System.out.println("Броня " + armor.getId() + " добавлена.");
+    }
+
+    public static void addArmor(Armor armor) {
+        armor.setId(makeId(ItemType.ARMOR, armor.getId()));
+        armorsList.put(armor.getId(), armor);
+        System.out.println("Броня " + armor.getId() + " добавлена.");
+    }
+
     //Создание id предмета
     private static Integer makeId(ItemType itemType, Integer id) {
         if (id == null) {
@@ -87,15 +99,12 @@ public class ItemMaker {
     public static void makePresets(ItemType itemType) {
         try (FileReader reader = new FileReader(path, StandardCharsets.UTF_8);
              BufferedReader br = new BufferedReader(reader)) {
-            while (br.ready()) {
-                String line = br.readLine();
-                if (!line.isEmpty()) {
-                    ItemType readType = ItemType.of(line.split(";")[1]);
-                    switch (itemType) {
-                        case ARMOR -> ItemMaker.addArmor(Converter.armorFromString(line));
-                        //case WEAPON -> ItemMaker.addArmor(Converter.armorFromString(line));
-                        //case USING -> ItemMaker.addArmor(Converter.armorFromString(line));
-                    }
+            while (br.ready() && (!br.readLine().isEmpty())) {
+                ItemType readType = ItemType.of(br.readLine().split(";")[1]);
+                switch (itemType) {
+                    case ARMOR -> ItemMaker.addArmor(Converter.armorFromString(br.readLine()));
+                    //case WEAPON -> ItemMaker.addArmor(Converter.armorFromString(br.readLine()));
+                    //case USING -> ItemMaker.addArmor(Converter.armorFromString(br.readLine()));
                 }
             }
         } catch (IOException e) {
@@ -108,15 +117,19 @@ public class ItemMaker {
         return armorsList.get(id);
     }
 
+    public static TreeMap<Integer, Armor> getArmorList() {
+        return armorsList;
+    }
+
     private static class Converter {
         //Получение класса брони из строки
         private static Armor armorFromString(String value) {
             String[] item = value.split(";");
             Armor result = new Armor(item[1],
-                    null,//item[2],
-                    Slot.of(item[2]),
-                    Material.of(item[3]),
-                    item[4]);
+                    item[2],
+                    Slot.of(item[3]),
+                    Material.of(item[4]),
+                    item[5]);
             result.setId(Integer.parseInt(item[0]));
             return result;
         }

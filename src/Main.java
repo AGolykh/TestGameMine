@@ -1,11 +1,15 @@
 import items.ItemMaker;
 import items.ItemType;
+import items.armors.Armor;
+
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
         ItemMaker.makePresets(ItemType.ARMOR);
-        for (int i = 100001; i <= 100008; i++) {
-            System.out.println(ItemMaker.getArmor(i));
+
+        for (Map.Entry<Integer, Armor> armor : ItemMaker.getArmorList().entrySet()) {
+            System.out.println(armor.getValue());
         }
     }
 }
