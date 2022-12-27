@@ -1,4 +1,4 @@
-package items.using;
+package items;
 
 public enum UsingType {
     FOOD, DRINK, FLASK, SCROLL
