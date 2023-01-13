@@ -1,9 +1,10 @@
 package items;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Property {
-    HashMap<PropertyType, Double> properties = new HashMap<>();
+    Map<PropertyType, Double> properties = new TreeMap<>();
 
     public Property(String value) {
         String[] property = value.split(",");
@@ -12,8 +13,13 @@ public class Property {
         }
     }
 
-    public HashMap<PropertyType, Double> getProperties() {
+    public Map<PropertyType, Double> getProperties() {
         return properties;
+    }
+
+    @Override
+    public String toString() {
+        return properties.toString();
     }
 
     private enum PropertyType {

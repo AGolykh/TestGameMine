@@ -1,5 +1,5 @@
 package items;
 
-public enum UsingType {
+public enum UsingType  {
     FOOD, DRINK, FLASK, SCROLL
 }

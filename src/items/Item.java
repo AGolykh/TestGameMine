@@ -1,6 +1,7 @@
 package items;
 
 public abstract class Item {
+    protected Integer objectId;
     protected Integer id;
     protected String name;
     protected String description;
@@ -9,11 +10,16 @@ public abstract class Item {
     protected double weight;
     protected ItemType itemType;
     protected Property property;
-    protected Rarity rarity;
+    protected ItemType.Rarity rarity;
 
-    public Item(String name, String description) {
+    public Item(Integer id, String name, String description) {
+        this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    public void setObjectId(Integer objectId) {
+        this.objectId = objectId;
     }
 
     public Integer getId() {
@@ -38,10 +44,6 @@ public abstract class Item {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public boolean isStack() {
-        return stack;
     }
 
     public void setStack(boolean stack) {
@@ -80,75 +82,42 @@ public abstract class Item {
         this.property = property;
     }
 
-    public Rarity getRarity() {
+    public ItemType.Rarity getRarity() {
         return rarity;
     }
 
-    public void setRarity(Rarity rarity) {
+    public void setRarity(ItemType.Rarity rarity) {
         this.rarity = rarity;
-    }
-
-    //Создание веса брони
-    protected double makeWeight(Armor.Material material, Armor.Slot slot) {
-        return Armor.Material.rate(material)
-                * Armor.Slot.rate(slot);
-    }
-
-    protected double makeWeight(Weapon.WeaponType weaponType) {
-        return Weapon.WeaponType.rate(weaponType);
-    }
-
-    //Создание стоимости
-    protected double makeCost(Armor.Material material, Armor.Slot slot, Rarity rarity) {
-        return Armor.Material.rate(material)
-                * Armor.Slot.rate(slot)
-                * Rarity.rate(rarity);
-    }
-
-    protected double makeCost(Weapon.WeaponType weaponType, Rarity rarity) {
-        return Weapon.WeaponType.rate(weaponType)
-                * Rarity.rate(rarity);
     }
 
     public enum ItemType {
         ARMOR, WEAPON, USING;
 
-        public static ItemType of(String value){
-            return switch (value) {
-                case "ARMOR" -> ARMOR;
-                case "WEAPON" -> WEAPON;
-                case "USING" -> USING;
-                default -> null;
-            };
-        }
-    }
+        public enum Rarity {
+            NORMAL, RARE, EPIC, LEGENDARY;
 
-    public enum Rarity {
-        NORMAL, RARE, EPIC, LEGENDARY;
-
-        public static double rate(Rarity rarity) {
-            return switch (rarity) {
-                case NORMAL -> 2.5;
-                case RARE -> 4.5;
-                case EPIC -> 6.0;
-                case LEGENDARY -> 7.5;
-            };
-        }
-
-        //Создание категории редкости
-        public Rarity makeRarity(Property property) {
-            Rarity rarity = Rarity.NORMAL;
-            double sumOfProperties = 0.0;
-            for (Double value : property.getProperties().values()) {
-                sumOfProperties += value;
+            public static double rate(Rarity rarity) {
+                return switch (rarity) {
+                    case NORMAL -> 2.5;
+                    case RARE -> 4.5;
+                    case EPIC -> 6.0;
+                    case LEGENDARY -> 7.5;
+                };
             }
-            double avgOfProperties = sumOfProperties / property.getProperties().size();
-            if (avgOfProperties > 30) rarity = Rarity.LEGENDARY;
-            else if (avgOfProperties > 20) rarity = Rarity.EPIC;
-            else if (avgOfProperties > 10) rarity = Rarity.RARE;
-            return rarity;
+
+            //Создание категории редкости
+            public static Rarity makeRarity(Property property) {
+                Rarity rarity = Rarity.NORMAL;
+                double sumOfProperties = 0.0;
+                for (Double value : property.getProperties().values()) {
+                    sumOfProperties += value;
+                }
+                double avgOfProperties = sumOfProperties / property.getProperties().size();
+                if (avgOfProperties > 30) rarity = Rarity.LEGENDARY;
+                else if (avgOfProperties > 20) rarity = Rarity.EPIC;
+                else if (avgOfProperties > 10) rarity = Rarity.RARE;
+                return rarity;
+            }
         }
-
     }
-
 }
